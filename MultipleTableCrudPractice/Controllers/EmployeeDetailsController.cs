@@ -218,5 +218,23 @@ namespace MultipleTableCrudPractice.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("EmployeePost")]
+        public async Task<IActionResult> EmployeePost([FromRouteAttribute] EmployeeDetails emp,List<AddressDetails> addressList)
+        {
+
+            try
+            {
+                var response = await _service.PostEmployee(emp,addressList);
+                return Ok(response);
+                //return StatusCode(StatusCodes.Status204NoContent);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
     }
 }

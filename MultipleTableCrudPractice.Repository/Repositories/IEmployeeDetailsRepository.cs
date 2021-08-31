@@ -18,6 +18,7 @@ namespace MultipleTableCrudPractice.Repository.Repositories
         Task<EmployeeDetails> InsertData(EmployeeDetails employeeDetails);
         Task<EmployeeAddressVM> InsertDataVm(EmployeeAddressVM employeeAddressVM);
         Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM);
+        Task<(EmployeeDetails, List<AddressDetails>)> PostEmployee(EmployeeDetails emp, List<AddressDetails> addressList);
         Task<string> UpdateData(int id, EmployeeDetails employeeDetails);
         Task<string> DeleteData(int id);
         Task<string> UpdateEmployeeComplex(EmployeeDto updateModel);
@@ -187,6 +188,23 @@ namespace MultipleTableCrudPractice.Repository.Repositories
             _context.Update(blog);
             _context.SaveChanges();
             return "Updated";
+        }
+
+        public async Task<(EmployeeDetails,List<AddressDetails>)> PostEmployee(EmployeeDetails emp, List<AddressDetails> addressList)
+        {
+            try
+            {
+                var order = emp;
+                order.Address = addressList;
+                _context.EmployeeDetailes.Add(order);
+                await _context.SaveChangesAsync();
+                return (emp, addressList);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }
