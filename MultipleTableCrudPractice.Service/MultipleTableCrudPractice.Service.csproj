@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MultipleTableCrudPractice.Data\MultipleTableCrudPractice.Data.csproj" />
+    <ProjectReference Include="..\MultipleTableCrudPractice.Repository\MultipleTableCrudPractice.Repository.csproj" />
+  </ItemGroup>
+
+</Project>
