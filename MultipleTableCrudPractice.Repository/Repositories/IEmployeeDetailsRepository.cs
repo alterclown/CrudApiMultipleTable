@@ -17,11 +17,11 @@ namespace MultipleTableCrudPractice.Repository.Repositories
         Task<EmployeeDetails> GetById(int Id);
         Task<EmployeeDetails> InsertData(EmployeeDetails employeeDetails);
         Task<EmployeeAddressVM> InsertDataVm(EmployeeAddressVM employeeAddressVM);
+        Task<EmployeeDto> InsertDataDTO(EmployeeDto dto);
+        Task<ManyEmployeeDto> InsertDataMany(ManyEmployeeDto dto);
         Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM);
-        Task<(EmployeeDetails, List<AddressDetails>)> PostEmployee(EmployeeDetails emp, List<AddressDetails> addressList);
         Task<string> UpdateData(int id, EmployeeDetails employeeDetails);
         Task<string> DeleteData(int id);
-        Task<string> UpdateEmployeeComplex(EmployeeDto updateModel);
     }
 
     public class EmployeeDetailsRepository : IEmployeeDetailsRepository
@@ -167,44 +167,71 @@ namespace MultipleTableCrudPractice.Repository.Repositories
                 throw ex;
             }
         }
-        public async Task<string> UpdateEmployeeComplex(EmployeeDto updateModel)
-        {
-            var blog = await _context.EmployeeDetailes
-                .Include(x => x.Address)
-                .FirstOrDefaultAsync(x => x.EmployeeId == updateModel.EmployeeId);
-
-             _context.RemoveRange(blog.Address);
-
-            await _context.AddRangeAsync(updateModel.Add.Select(x => new AddressDetails
-            {
-                EmployeeId = blog.EmployeeId,
-                EmployeeAddress = x.EmployeeAddress,
-                AddressType = x.AddressType
-            }));
-
-            await _context.SaveChangesAsync();
-            blog.EmployeeName = updateModel.EmployeeName;
-            blog.Designation = updateModel.Designation;
-            _context.Update(blog);
-            _context.SaveChanges();
-            return "Updated";
-        }
-
-        public async Task<(EmployeeDetails,List<AddressDetails>)> PostEmployee(EmployeeDetails emp, List<AddressDetails> addressList)
+        #region Insert Data One to One
+        public async Task<EmployeeDto> InsertDataDTO(EmployeeDto dto)
         {
             try
             {
-                var order = emp;
-                order.Address = addressList;
-                _context.EmployeeDetailes.Add(order);
+                var emp = new EmployeeDetails()
+                {
+                    EmployeeId = dto.EmployeeId,
+                    EmployeeName = dto.EmployeeName,
+                    Designation = dto.Designation
+                };
+                await _context.EmployeeDetailes.AddAsync(emp);
                 await _context.SaveChangesAsync();
-                return (emp, addressList);
+                var dataId = await _context.EmployeeDetailes.FindAsync(emp.EmployeeId);
+                var add = new AddressDetails()
+                {
+                EmployeeId = dataId.EmployeeId,
+                EmployeeAddress = dto.Add.EmployeeAddress,
+                AddressType = dto.Add.AddressType
+                };
+                _context.AddressDetailes.Add(add);
+                await _context.SaveChangesAsync();
+                return dto;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+        #endregion
+
+        #region Dto List + Object
+        public async Task<ManyEmployeeDto> InsertDataMany(ManyEmployeeDto dto)
+        {
+            try
+            {
+                var emp = new EmployeeDetails()
+                {
+                    EmployeeId = dto.EmployeeDetails.EmployeeId,
+                    EmployeeName = dto.EmployeeDetails.EmployeeName,
+                    Designation = dto.EmployeeDetails.Designation
+                };
+                await _context.EmployeeDetailes.AddAsync(emp);
+                await _context.SaveChangesAsync();
+                var dataId = await _context.EmployeeDetailes.FindAsync(emp.EmployeeId);
+
+                foreach (var address in dto.Address)
+                {
+                    var add = new AddressDetails()
+                    {
+                        EmployeeId = dataId.EmployeeId,
+                        EmployeeAddress = address.EmployeeAddress,
+                        AddressType = address.AddressType
+                    };
+                    _context.AddressDetailes.Add(add);
+                }
+                await _context.SaveChangesAsync();
+                return dto;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
     }
 }

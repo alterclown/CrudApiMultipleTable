@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace MultipleTableCrudPractice.Data.DTOs
 {
-    public class EmployeeDto
+    public class ManyEmployeeDto
     {
-        public int EmployeeId { get; set; }
-        public string EmployeeName { get; set; }
-        public string Designation { get; set; }
-        public AddressDetails Add { get; set; }
+        public EmployeeDetails EmployeeDetails { get; set; }
+        public List<AddressDetails> Address { get; set; }
     }
 }

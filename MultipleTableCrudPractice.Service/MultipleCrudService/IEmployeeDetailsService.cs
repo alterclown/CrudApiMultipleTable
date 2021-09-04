@@ -18,9 +18,9 @@ namespace MultipleTableCrudPractice.Service.MultipleCrudService
         Task<string> UpdateData(int id, EmployeeDetails employeeDetails);
         Task<string> DeleteData(int id);
         Task<EmployeeAddressVM> InsertDataVm(EmployeeAddressVM employeeAddressVM);
+        Task<EmployeeDto> InsertDataDTO(EmployeeDto dto);
         Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM);
-        Task<string> UpdateEmployeeComplex(EmployeeDto updateModel);
-        Task<(EmployeeDetails, List<AddressDetails>)> PostEmployee(EmployeeDetails emp, List<AddressDetails> addressList);
+        Task<ManyEmployeeDto> InsertDataMany(ManyEmployeeDto dto);
     }
 
     public class EmployeeDetailsService : IEmployeeDetailsService
@@ -88,6 +88,34 @@ namespace MultipleTableCrudPractice.Service.MultipleCrudService
             }
         }
 
+        public async Task<EmployeeDto> InsertDataDTO(EmployeeDto dto)
+        {
+            try
+            {
+                var res = await _repository.InsertDataDTO(dto);
+                return res;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<ManyEmployeeDto> InsertDataMany(ManyEmployeeDto dto)
+        {
+            try
+            {
+                var res = await _repository.InsertDataMany(dto);
+                return res;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public async Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM)
         {
             try
@@ -116,39 +144,13 @@ namespace MultipleTableCrudPractice.Service.MultipleCrudService
             }
         }
 
-        public async Task<(EmployeeDetails, List<AddressDetails>)> PostEmployee(EmployeeDetails emp, List<AddressDetails> addressList)
-        {
-            try
-            {
-                var res = await _repository.PostEmployee(emp, addressList);
-                return res;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
+      
 
         public async Task<string> UpdateData(int id, EmployeeDetails employeeDetails)
         {
             try
             {
                 var res = await _repository.UpdateData(id, employeeDetails);
-                return res;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<string> UpdateEmployeeComplex(EmployeeDto updateModel)
-        {
-            try
-            {
-                var res = await _repository.UpdateEmployeeComplex(updateModel);
                 return res;
             }
             catch (Exception ex)

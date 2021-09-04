@@ -198,36 +198,43 @@ namespace MultipleTableCrudPractice.Controllers
                 }
             }
         }
-
+        #region  Insert Data One to One
         [HttpPost]
-        [Route("PutEmployeeDetails")]
-        public async Task<IActionResult> UpdateEmployee(EmployeeDto updateModel)
+        [Route("EmployeePostDto")]
+        public async Task<IActionResult> EmployeePostDto(EmployeeDto dto)
         {
+
             try
             {
-                var res = await _service.UpdateEmployeeComplex(updateModel);
+                var res = await _service.InsertDataDTO(dto);
                 if (res != null)
                 {
                     return Ok(res);
                 }
                 return StatusCode(StatusCodes.Status204NoContent);
+
             }
             catch (Exception ex)
             {
+
                 throw ex;
             }
         }
-
+        #endregion
+        #region Insert Data One to Many
         [HttpPost]
-        [Route("EmployeePost")]
-        public async Task<IActionResult> EmployeePost([FromRouteAttribute] EmployeeDetails emp,List<AddressDetails> addressList)
+        [Route("InsertManyDataDTO")]
+        public async Task<IActionResult> InsertManyData(ManyEmployeeDto dto)
         {
 
             try
             {
-                var response = await _service.PostEmployee(emp,addressList);
-                return Ok(response);
-                //return StatusCode(StatusCodes.Status204NoContent);
+                var response = await _service.InsertDataMany(dto);
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception ex)
             {
@@ -235,6 +242,7 @@ namespace MultipleTableCrudPractice.Controllers
                 throw ex;
             }
         }
+#endregion
 
     }
 }
