@@ -63,7 +63,7 @@ namespace MultipleTableCrudPractice.Controllers
                 throw ex;
             }
         }
-
+        #region Single Entity Insert
         [HttpPost]
         [Route("PostEmployeeDetails")]
         public async Task<IActionResult> CreateEmployeeDetails(EmployeeDetails employeeDetails)
@@ -84,7 +84,8 @@ namespace MultipleTableCrudPractice.Controllers
                 throw ex;
             }
         }
-
+        #endregion
+        #region Insert data into two entities using viewmodel (two objects)
         [HttpPost]
         [Route("InsertEmployeeAddress")]
         public async Task<IActionResult> CreateEmployeeDetailsVM(EmployeeAddressVM employeeAddressVM)
@@ -105,7 +106,9 @@ namespace MultipleTableCrudPractice.Controllers
                 throw ex;
             }
         }
+        #endregion
 
+        #region Insert data into two entities (object and list together)
         [HttpPost]
         [Route("InsertDataObjectWithListVm")]
         public async Task<IActionResult> CreateEmployeeDetailObjectWithList(EmployeeDetails employeeAddressVM)
@@ -126,6 +129,8 @@ namespace MultipleTableCrudPractice.Controllers
                 throw ex;
             }
         }
+
+        #endregion
 
         [HttpDelete("DeleteById/{employeeDetailsId}")]
         public async Task<IActionResult> DeleteEmployeeDetails(int employeeDetailsId)

@@ -118,7 +118,7 @@ namespace MultipleTableCrudPractice.Repository.Repositories
                 throw ex;
             }
         }
-
+        #region Insert Object With List
         public async Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM)
         {
             try
@@ -151,6 +151,7 @@ namespace MultipleTableCrudPractice.Repository.Repositories
                 throw ex;
             }
         }
+        #endregion
         public async Task<string> UpdateData(int id, EmployeeDetails employeeDetails)
         {
             try
