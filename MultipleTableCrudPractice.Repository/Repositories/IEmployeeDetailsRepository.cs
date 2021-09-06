@@ -249,16 +249,17 @@ namespace MultipleTableCrudPractice.Repository.Repositories
                     
                     intermediary.EmployeeName = employeeAddressVM.EmployeeName;
                     intermediary.Designation = employeeAddressVM.Designation;
-                    _context.EmployeeDetailes.Update(intermediary);
+                    //_context.EmployeeDetailes.Update(intermediary);
+                    _context.Entry(intermediary).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
                     foreach (var res in intermediary.Address)
                     {
                         res.EmployeeAddress = employeeAddressVM.EmployeeAddress;
                         res.AddressType = employeeAddressVM.AddressType;
-                        _context.AddressDetailes.Update(res);
+                        _context.Entry(res).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
                     }
                     //rest of updates
-                    await _context.SaveChangesAsync();
-                    
                 }
                 return employeeAddressVM;
             }
