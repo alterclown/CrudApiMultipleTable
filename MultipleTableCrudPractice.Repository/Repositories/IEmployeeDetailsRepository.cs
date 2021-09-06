@@ -21,6 +21,7 @@ namespace MultipleTableCrudPractice.Repository.Repositories
         Task<ManyEmployeeDto> InsertDataMany(ManyEmployeeDto dto);
         Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM);
         Task<string> UpdateData(int id, EmployeeDetails employeeDetails);
+        Task<EmployeeAddressVM> UpdateDataVm(int id,EmployeeAddressVM employeeAddressVM);
         Task<string> DeleteData(int id);
     }
 
@@ -87,7 +88,7 @@ namespace MultipleTableCrudPractice.Repository.Repositories
                 throw ex;
             }
         }
-
+        #region Insert Two Objects
         public async Task<EmployeeAddressVM> InsertDataVm(EmployeeAddressVM employeeAddressVM)
         {
             try
@@ -118,6 +119,9 @@ namespace MultipleTableCrudPractice.Repository.Repositories
                 throw ex;
             }
         }
+
+        #endregion
+
         #region Insert Object With List
         public async Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM)
         {
@@ -226,6 +230,37 @@ namespace MultipleTableCrudPractice.Repository.Repositories
                 }
                 await _context.SaveChangesAsync();
                 return dto;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
+        #region Update two objects
+        public async Task<EmployeeAddressVM> UpdateDataVm(int id,EmployeeAddressVM employeeAddressVM)
+        {
+            try
+            {
+                var intermediary = _context.EmployeeDetailes.Where(x => x.EmployeeId == employeeAddressVM.EmployeeId).FirstOrDefault();
+                if (intermediary != null)
+                {
+                    
+                    intermediary.EmployeeName = employeeAddressVM.EmployeeName;
+                    intermediary.Designation = employeeAddressVM.Designation;
+                    _context.EmployeeDetailes.Update(intermediary);
+                    foreach (var res in intermediary.Address)
+                    {
+                        res.EmployeeAddress = employeeAddressVM.EmployeeAddress;
+                        res.AddressType = employeeAddressVM.AddressType;
+                        _context.AddressDetailes.Update(res);
+                    }
+                    //rest of updates
+                    await _context.SaveChangesAsync();
+                    
+                }
+                return employeeAddressVM;
             }
             catch (Exception ex)
             {

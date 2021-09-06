@@ -247,7 +247,31 @@ namespace MultipleTableCrudPractice.Controllers
                 throw ex;
             }
         }
-#endregion
+        #endregion
+
+        #region  Update Data One to One
+        [HttpPut]
+        [Route("UpdateEmployeeVM")]
+        public async Task<IActionResult> EmployeeVMUpdate(int id, EmployeeAddressVM vm)
+        {
+
+            try
+            {
+                var res = await _service.UpdateDataVm(id,vm);
+                if (res != null)
+                {
+                    return Ok(res);
+                }
+                return StatusCode(StatusCodes.Status204NoContent);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        #endregion
 
     }
 }
