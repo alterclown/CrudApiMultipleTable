@@ -21,7 +21,7 @@ namespace MultipleTableCrudPractice.Repository.Repositories
         Task<ManyEmployeeDto> InsertDataMany(ManyEmployeeDto dto);
         Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM);
         Task<string> UpdateData(int id, EmployeeDetails employeeDetails);
-        Task<EmployeeAddressVM> UpdateDataVm(int id,EmployeeAddressVM employeeAddressVM);
+        Task<EmployeeAddressVM> UpdateDataVm(EmployeeAddressVM employeeAddressVM);
         Task<string> DeleteData(int id);
     }
 
@@ -239,27 +239,52 @@ namespace MultipleTableCrudPractice.Repository.Repositories
         #endregion
 
         #region Update two objects
-        public async Task<EmployeeAddressVM> UpdateDataVm(int id,EmployeeAddressVM employeeAddressVM)
+        public async Task<EmployeeAddressVM> UpdateDataVm(EmployeeAddressVM employeeAddressVM)
         {
             try
             {
-                var intermediary = _context.EmployeeDetailes.Where(x => x.EmployeeId == employeeAddressVM.EmployeeId).FirstOrDefault();
-                if (intermediary != null)
+                var existingParent = _context.EmployeeDetailes
+                                                .Where(p => p.EmployeeId == employeeAddressVM.EmployeeId)
+                                                .Include(p => p.Address)
+                                                .SingleOrDefault();
+
+                if (existingParent != null)
                 {
-                    
-                    intermediary.EmployeeName = employeeAddressVM.EmployeeName;
-                    intermediary.Designation = employeeAddressVM.Designation;
-                    //_context.EmployeeDetailes.Update(intermediary);
-                    _context.Entry(intermediary).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                    foreach (var res in intermediary.Address)
+                    // Update parent
+                    _context.Entry(existingParent).CurrentValues.SetValues(employeeAddressVM);
+
+                    // Delete children
+                    foreach (var existingChild in existingParent.Address.ToList())
                     {
-                        res.EmployeeAddress = employeeAddressVM.EmployeeAddress;
-                        res.AddressType = employeeAddressVM.AddressType;
-                        _context.Entry(res).State = EntityState.Modified;
-                        await _context.SaveChangesAsync();
+                        if (!employeeAddressVM.Address.Any(c => c.AddressId == existingChild.AddressId))
+                            _context.AddressDetailes.Remove(existingChild);
                     }
-                    //rest of updates
+
+                    // Update and Insert children
+                    foreach (var childModel in employeeAddressVM.Address)
+                    {
+                        var existingChild = existingParent.Address
+                            .Where(c => c.AddressId == childModel.AddressId && c.AddressId != default(int))
+                            .SingleOrDefault();
+
+                        if (existingChild != null)
+                            // Update child
+                            _context.Entry(existingChild).CurrentValues.SetValues(childModel);
+                        else
+                        {
+                            // Insert child
+                            var newChild = new AddressDetails
+                            {
+                            AddressId = childModel.EmployeeId,
+                            EmployeeId = childModel.EmployeeId,
+                            EmployeeAddress = childModel.EmployeeAddress,
+                            AddressType = childModel.AddressType,
+                        };
+                            existingParent.Address.Add(newChild);
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
                 }
                 return employeeAddressVM;
             }
