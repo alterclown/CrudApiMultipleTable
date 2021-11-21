@@ -22,6 +22,7 @@ namespace MultipleTableCrudPractice.Repository.Repositories
         Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM);
         Task<string> UpdateData(int id, EmployeeDetails employeeDetails);
         Task<EmployeeAddressVM> UpdateDataVm(EmployeeAddressVM employeeAddressVM);
+        Task<EmployeeAddVM> UpdateDataSingleVm(EmployeeAddVM vM);
         Task<string> DeleteData(int id);
     }
 
@@ -291,6 +292,23 @@ namespace MultipleTableCrudPractice.Repository.Repositories
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public async Task<EmployeeAddVM> UpdateDataSingleVm(EmployeeAddVM vM)
+        {
+            try
+            {
+                var client = _context.EmployeeDetailes.SingleOrDefault(x => x.EmployeeId == vM.address.AddressId);
+                vM.address = client;
+                _context.EmployeeDetailes.Update(vM);
+                _context.SaveChanges();
+                return vM;
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
         #endregion

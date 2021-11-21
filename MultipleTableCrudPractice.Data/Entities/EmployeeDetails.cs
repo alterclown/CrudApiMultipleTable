@@ -18,5 +18,7 @@ namespace MultipleTableCrudPractice.Data.Entities
         public string Designation { get; set; }
         [ForeignKey("EmployeeId")]
         public List<AddressDetails> Address { get; set; }
+        [ForeignKey("EmployeeId")]
+        public AddressDetails Add { get; set; }
     }
 }
