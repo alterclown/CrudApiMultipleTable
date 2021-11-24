@@ -24,6 +24,7 @@ namespace MultipleTableCrudPractice.Repository.Repositories
         Task<EmployeeAddressVM> UpdateDataVm(EmployeeAddressVM employeeAddressVM);
         Task<EmployeeAddVM> UpdateDataSingleVm(EmployeeAddVM vM);
         Task<string> DeleteData(int id);
+        Task<List<EmployeeAddressVM>> GetEmployeeAddressList();
     }
 
     public class EmployeeDetailsRepository : IEmployeeDetailsRepository
@@ -300,8 +301,8 @@ namespace MultipleTableCrudPractice.Repository.Repositories
             try
             {
                 var client = _context.EmployeeDetailes.SingleOrDefault(x => x.EmployeeId == vM.address.AddressId);
-                vM.address = client;
-                _context.EmployeeDetailes.Update(vM);
+                //vM.address = client.Address;
+                //_context.EmployeeDetailes.Update(vM);
                 _context.SaveChanges();
                 return vM;
             }
@@ -309,6 +310,26 @@ namespace MultipleTableCrudPractice.Repository.Repositories
             {
 
                 throw;
+            }
+        }
+
+        public async Task<List<EmployeeAddressVM>> GetEmployeeAddressList()
+        {
+            try
+            {
+                var response = await  (from t1 in _context.EmployeeDetailes
+                               join t2 in _context.AddressDetailes on t1.EmployeeId equals t2.EmployeeId
+                                       select new EmployeeAddressVM 
+                                       {   EmployeeId = t1.EmployeeId,
+                                           EmployeeName=t1.EmployeeName,
+                                           AddressId = t2.AddressId }).ToListAsync();
+
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         #endregion

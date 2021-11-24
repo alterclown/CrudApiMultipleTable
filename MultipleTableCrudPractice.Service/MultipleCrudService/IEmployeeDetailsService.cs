@@ -22,6 +22,7 @@ namespace MultipleTableCrudPractice.Service.MultipleCrudService
         Task<EmployeeDetails> InsertDataObjectWithListVm(EmployeeDetails employeeAddressVM);
         Task<ManyEmployeeDto> InsertDataMany(ManyEmployeeDto dto);
         Task<EmployeeAddressVM> UpdateDataVm(EmployeeAddressVM employeeAddressVM);
+        Task<List<EmployeeAddressVM>> GetEmployeeAddressList();
     }
 
     public class EmployeeDetailsService : IEmployeeDetailsService
@@ -52,6 +53,20 @@ namespace MultipleTableCrudPractice.Service.MultipleCrudService
             try
             {
                 var res = await _repository.GetById(Id);
+                return res;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<List<EmployeeAddressVM>> GetEmployeeAddressList()
+        {
+            try
+            {
+                var res = await _repository.GetEmployeeAddressList();
                 return res;
             }
             catch (Exception ex)

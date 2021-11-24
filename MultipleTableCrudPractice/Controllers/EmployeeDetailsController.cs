@@ -43,6 +43,27 @@ namespace MultipleTableCrudPractice.Controllers
 
         }
 
+        [HttpGet]
+        [Route("GetAdressList")]
+        public async Task<IActionResult> GetEmployeeAddressList()
+        {
+            try
+            {
+                var response = await _service.GetEmployeeAddressList();
+                if (response != null)
+                {
+                    return Ok(response);
+                }
+                return StatusCode(StatusCodes.Status204NoContent);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
         // GET: Company/Details/5
         [HttpGet]
         [Route("GetEmployeeDetailsById/{EmployeeDetailsId}")]
